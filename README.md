@@ -56,36 +56,26 @@ Every deploy:
 npm run deploy
 ```
 
-That builds `dist/`, then `wrangler pages deploy` ships it. First deploy creates the `anaconda-security-quiz` Pages project; subsequent deploys publish a new version. Cloudflare gives each deploy its own preview URL plus the production alias.
-
-## Custom domain
-
-Production URL: **`https://secquiz.anacondaconnect.com`**
-
-After the first deploy, add the custom domain in the Cloudflare dashboard:
-
-1. **Pages → anaconda-security-quiz → Custom domains → Set up a custom domain**
-2. Enter `secquiz.anacondaconnect.com`
-3. Cloudflare auto-creates the CNAME inside the `anacondaconnect.com` zone (the zone already lives in our Cloudflare account; see `~/git/infra/terraform/cloudflare/anacondaconnect.com.tf`).
-4. Cert is provisioned automatically.
+That builds `dist/`, then `wrangler pages deploy` ships it. First deploy creates the `anaconda-security-quiz` Pages project; subsequent deploys publish a new version. Cloudflare gives each deploy its own preview URL plus the production alias `https://anaconda-security-quiz.pages.dev`.
 
 ## Access (auth)
 
-The Pages site is gated by Cloudflare Access. Anyone hitting it must complete Anaconda SSO before any HTML is served. The Access app + identity provider are configured in the Cloudflare Zero Trust dashboard, not in this repo.
+The Pages site is gated by Cloudflare Access on the `*.pages.dev` hostname directly — no custom domain needed. Anyone hitting it must complete Anaconda SSO before any HTML is served. The Access app + identity provider are configured in the Cloudflare Zero Trust dashboard, not in this repo.
 
 Setup steps (one-time):
 1. **Zero Trust → Access → Applications → Add an application → Self-hosted**
-2. Application domain: `secquiz.anacondaconnect.com`
-3. Identity provider: the existing Anaconda SSO IdP (Okta, etc.)
+2. Application domain: `anaconda-security-quiz.pages.dev` (and optionally any per-deploy preview hostnames you want gated)
+3. Identity provider: the existing Anaconda SSO IdP
 4. Policy: Allow `emails ending in @anaconda.com` (or whichever Access group fits)
 5. Save
 
-URL pattern:
-- `/` — entry page where you type the quiz name
-- `/<slug>` — the quiz itself (e.g. `/linux-sysadmin-security`)
-- `/<token>` — full listing of all quizzes; the token is in `.list-token` (gitignored)
+## URLs
 
-To rotate the listing token (e.g. someone left): `rm .list-token && npm run build && npm run deploy`.
+- `https://anaconda-security-quiz.pages.dev/` — entry page where you type the quiz name
+- `https://anaconda-security-quiz.pages.dev/<slug>` — the quiz itself (e.g. `/linux-sysadmin-security`)
+- `https://anaconda-security-quiz.pages.dev/<token>` — full listing of all quizzes; the token is in `.list-token` (gitignored)
+
+To rotate the listing token (e.g. someone leaves): `rm .list-token && npm run deploy`.
 
 ## Why Cloudflare Pages instead of EC2?
 
