@@ -4,14 +4,11 @@ dist/
 # stable per-deployment token for the private listing page
 .list-token
 
-# terraform
-terraform/.terraform/
-terraform/.terraform.lock.hcl
-terraform/terraform.tfstate
-terraform/terraform.tfstate.backup
-terraform/terraform.tfvars
-terraform/.dist.zip
-terraform/.dist.tar.gz
+# node
+node_modules/
+
+# wrangler
+.wrangler/
 
 # macOS / editor
 .DS_Store

@@ -167,8 +167,22 @@ const listingHtml = `<!DOCTYPE html>
 `;
 fs.writeFileSync(path.join(DIST_DIR, `${token}.html`), listingHtml);
 
+// Copy Cloudflare Pages headers file
+const HEADERS_SRC = path.join(__dirname, "_headers");
+if (fs.existsSync(HEADERS_SRC)) {
+  fs.copyFileSync(HEADERS_SRC, path.join(DIST_DIR, "_headers"));
+}
+
+// Pretty URLs: /linux-sysadmin-security -> /linux-sysadmin-security.html
+// Cloudflare Pages auto-resolves .html for clean paths, but emit explicit
+// _redirects so the behavior is documented and deterministic.
+const redirects = built.map(b => `/${b.slug} /${b.slug}.html 200`).join("\n") +
+  `\n/${token} /${token}.html 200\n`;
+fs.writeFileSync(path.join(DIST_DIR, "_redirects"), redirects);
+
 console.log(`✓ index.html (entry field)`);
 console.log(`✓ ${token}.html (private listing page, ${built.length} quizzes)`);
+console.log(`✓ _headers, _redirects`);
 console.log(`\nDone. Output in dist/`);
 console.log(`\n  Entry page:   /`);
 console.log(`  All quizzes:  /${token}`);

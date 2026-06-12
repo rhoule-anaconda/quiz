@@ -1,18 +1,19 @@
 # Security Team Quizzes
 
-Single-page web quizzes for security team trivia nights. Each quiz is a standalone HTML file generated from a JSON question set.
+Single-page web quizzes for security team trivia nights. Each quiz is a standalone HTML file generated from a JSON question set, deployed to Cloudflare Pages, and gated behind Cloudflare Access (Anaconda SSO).
 
 ## Layout
 
 ```
 questions/         # one .json per quiz — filename is the slug AND the title
-  security-team-trivia-night.json
-  linux-sysadmin-security.json
 src/
-  template.html    # the quiz UI (categories auto-detected, colors customizable per quiz)
+  template.html    # the quiz UI (categories auto-detected, colors customizable)
   build.mjs        # node script: questions/*.json → dist/*.html + dist/index.html
-dist/              # built output, ready to host
-terraform/         # tiny EC2 in the sandbox account, nginx, Warp-IP-only
+  _headers         # Cloudflare Pages security headers (copied to dist/ on build)
+dist/              # built output, ready to deploy
+cloudflare/
+  wrangler.toml    # Pages project config
+package.json       # `npm run build`, `npm run deploy`, `npm run preview`
 ```
 
 ## Authoring a new quiz
@@ -34,36 +35,58 @@ terraform/         # tiny EC2 in the sandbox account, nginx, Warp-IP-only
 }
 ```
 
-## Build
+## Build & preview locally
 
 ```sh
-node src/build.mjs
+npm run build      # generates dist/
+npm run preview    # opens dist/index.html in the browser
 ```
 
-Outputs:
-- `dist/<slug>.html` for each quiz
-- `dist/index.html` listing all quizzes
+## Deploy
 
-## Deploy (sandbox)
-
-The sandbox account is torn down weekly, so we just reapply. State is local — losing it doesn't matter.
+One-time setup:
 
 ```sh
-cd terraform
-cp terraform.tfvars.example terraform.tfvars  # first time only
-
-# Auth via SSO
-aws sso login --profile <your-sandbox-profile>
-export AWS_PROFILE=<your-sandbox-profile>
-
-terraform init    # first time only
-terraform apply
+wrangler login     # OAuth into the Anaconda Cloudflare account
 ```
 
-Output gives you `quiz_url`: `https://quiz.anaconda-sandbox.com/`. The host is locked to Warp egress IPs only at the network layer; TLS is provisioned by Caddy via Let's Encrypt using Route53 DNS-01 (so port 80 stays closed to the internet).
+Every deploy:
 
-URL pattern: `https://quiz.anaconda-sandbox.com/<slug>` — e.g. `https://quiz.anaconda-sandbox.com/linux-sysadmin-security`.
+```sh
+npm run deploy
+```
 
-First boot takes ~2-3 minutes: Caddy is built from source with `xcaddy` (we need the Route53 DNS plugin), then it requests the cert. If the URL doesn't load, SSM in and `journalctl -u caddy -f`.
+That builds `dist/`, then `wrangler pages deploy` ships it. First deploy creates the `anaconda-security-quiz` Pages project; subsequent deploys publish a new version. Cloudflare gives each deploy its own preview URL plus the production alias.
 
-`user_data_replace_on_change = true` means the instance gets recreated whenever the dist contents change, so `terraform apply` is your redeploy.
+## Custom domain
+
+Production URL: **`https://secquiz.anacondaconnect.com`**
+
+After the first deploy, add the custom domain in the Cloudflare dashboard:
+
+1. **Pages → anaconda-security-quiz → Custom domains → Set up a custom domain**
+2. Enter `secquiz.anacondaconnect.com`
+3. Cloudflare auto-creates the CNAME inside the `anacondaconnect.com` zone (the zone already lives in our Cloudflare account; see `~/git/infra/terraform/cloudflare/anacondaconnect.com.tf`).
+4. Cert is provisioned automatically.
+
+## Access (auth)
+
+The Pages site is gated by Cloudflare Access. Anyone hitting it must complete Anaconda SSO before any HTML is served. The Access app + identity provider are configured in the Cloudflare Zero Trust dashboard, not in this repo.
+
+Setup steps (one-time):
+1. **Zero Trust → Access → Applications → Add an application → Self-hosted**
+2. Application domain: `secquiz.anacondaconnect.com`
+3. Identity provider: the existing Anaconda SSO IdP (Okta, etc.)
+4. Policy: Allow `emails ending in @anaconda.com` (or whichever Access group fits)
+5. Save
+
+URL pattern:
+- `/` — entry page where you type the quiz name
+- `/<slug>` — the quiz itself (e.g. `/linux-sysadmin-security`)
+- `/<token>` — full listing of all quizzes; the token is in `.list-token` (gitignored)
+
+To rotate the listing token (e.g. someone left): `rm .list-token && npm run build && npm run deploy`.
+
+## Why Cloudflare Pages instead of EC2?
+
+The site is 100% static HTML. Hosting it on a VM meant fighting xcaddy compile times, AL2023 tmpfs limits, S3 user_data workarounds, weekly sandbox teardowns, and Caddy ACME plumbing — all to serve 5 files. Pages takes care of all of that for free, and Access provides real SSO identity instead of treating "is this IP a Warp egress" as a proxy for identity.

@@ -1,0 +1,10 @@
+{
+  "name": "anaconda-security-quiz",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node src/build.mjs",
+    "deploy": "npm run build && wrangler pages deploy dist --project-name anaconda-security-quiz --commit-dirty=true",
+    "preview": "npm run build && open dist/index.html"
+  }
+}
