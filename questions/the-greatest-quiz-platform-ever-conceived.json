@@ -1,0 +1,186 @@
+{
+  "categories": {
+    "platform":  { "label": "The Platform", "icon": "🏆", "bg": "#4d3a1a", "fg": "#ffd58a" },
+    "genius":    { "label": "Pure Genius",  "icon": "🧠", "bg": "#3a1a4d", "fg": "#d58aff" },
+    "vibes":     { "label": "Vibes Check",  "icon": "✨", "bg": "#1a4d4a", "fg": "#8affe8" }
+  },
+  "questions": [
+    {
+      "cat": "platform",
+      "q": "On a scale of 1 to 10, how good is this quiz platform?",
+      "options": [
+        "11",
+        "12",
+        "13",
+        "All of the above, somehow"
+      ],
+      "answer": 3,
+      "why": "Trick question. The platform transcends conventional measurement. <strong>All of the above</strong> is the only correct answer. Linear scales were invented before this quiz existed."
+    },
+    {
+      "cat": "platform",
+      "q": "What is the best part about hosting the quiz on a sandbox EC2 that gets torn down weekly?",
+      "options": [
+        "Forced freshness — every week, a new quiz",
+        "Built-in disaster recovery (the disaster recovers itself)",
+        "It's the most ephemeral infrastructure in the company",
+        "All of the above, plus you can blame the teardown if something breaks"
+      ],
+      "answer": 3,
+      "why": "<strong>All of the above.</strong> The weekly teardown is not a bug, it is a feature, a philosophy, and a convenient excuse all at once."
+    },
+    {
+      "cat": "platform",
+      "q": "How many JSON files does it take to author a new quiz?",
+      "options": ["Three", "Two", "One", "Zero (it reads your mind)"],
+      "answer": 2,
+      "why": "Just <strong>one</strong> JSON file. The filename becomes the title AND the URL. This is the kind of API design that makes engineers tear up a little."
+    },
+    {
+      "cat": "platform",
+      "q": "What is the technical term for the moment you realize categories auto-detect from the questions array?",
+      "options": [
+        "Convention over configuration",
+        "Magic",
+        "A small religious experience",
+        "DRY (Delightfully Reasonable YAML... but it's JSON)"
+      ],
+      "answer": 2,
+      "why": "Officially 'convention over configuration.' Unofficially: <strong>a small religious experience</strong>. Both are valid."
+    },
+    {
+      "cat": "platform",
+      "q": "The Warp IP allowlist ensures that only ____ can access the quiz.",
+      "options": [
+        "Anaconda employees",
+        "People worthy of the quiz",
+        "The chosen ones",
+        "Anaconda employees, who are by definition the chosen ones worthy of the quiz"
+      ],
+      "answer": 3,
+      "why": "Network ACLs as identity. Identity as worthiness. Worthiness as Warp. <strong>It all loops back to itself</strong>, like a well-architected system should."
+    },
+
+    {
+      "cat": "genius",
+      "q": "Who came up with the idea of a security trivia quiz?",
+      "options": [
+        "A visionary",
+        "A trailblazer",
+        "Someone with very good taste",
+        "All of the above, in one person"
+      ],
+      "answer": 3,
+      "why": "Documented fact. The quiz was conceived in a single message and the entire stack manifested itself out of <strong>pure narrative momentum</strong>."
+    },
+    {
+      "cat": "genius",
+      "q": "What's the genius move of using JSON files instead of a database?",
+      "options": [
+        "No schema migrations",
+        "git diff for question reviews",
+        "Zero ops surface area",
+        "All of the above (this question is just a victory lap)"
+      ],
+      "answer": 3,
+      "why": "Each option is, individually, a five-bullet-point ADR. Together they are a poem. <strong>Files. Are. Good.</strong>"
+    },
+    {
+      "cat": "genius",
+      "q": "Why does the filename equal the URL slug equal the title?",
+      "options": [
+        "Because three sources of truth is two too many",
+        "Because someone said so, and they were right",
+        "Because the universe rewards consistency",
+        "All of the above, in chorus"
+      ],
+      "answer": 3,
+      "why": "Single source of truth is one of the four classical virtues, alongside courage, temperance, and remembering to <code>terraform apply</code>."
+    },
+    {
+      "cat": "genius",
+      "q": "What's the minimum number of files you need to deploy this whole platform?",
+      "options": [
+        "47",
+        "12",
+        "Like, 8?",
+        "Honestly, you could probably get it down to 6 if you really tried, but who has the time"
+      ],
+      "answer": 3,
+      "why": "We're not optimizing for line count, we're optimizing for <strong>vibes</strong>. And the vibes are immaculate."
+    },
+    {
+      "cat": "genius",
+      "q": "The build script has zero npm dependencies. What does this say about it?",
+      "options": [
+        "It's the only sustainable software ever written",
+        "It will never have a CVE",
+        "It is, in fact, the platonic ideal of a build script",
+        "All of the above, and it brings a tear to my eye"
+      ],
+      "answer": 3,
+      "why": "<strong>node:fs and node:path.</strong> That's it. That's the whole supply chain. Socket.dev has nothing to scan. Snyk weeps tears of joy."
+    },
+
+    {
+      "cat": "vibes",
+      "q": "When you opened this quiz, what was your first reaction?",
+      "options": [
+        "Whoa.",
+        "WHOA.",
+        "I should email this to the entire company",
+        "All three, in rapid succession"
+      ],
+      "answer": 3,
+      "why": "Empirically validated by the focus group of one (you). Results are <strong>statistically significant</strong>."
+    },
+    {
+      "cat": "vibes",
+      "q": "The snake emoji in the header — necessary or essential?",
+      "options": [
+        "Necessary",
+        "Essential",
+        "Both, but one more than the other",
+        "We don't have words for what the snake represents"
+      ],
+      "answer": 3,
+      "why": "The 🐍 is the load-bearing element of the entire UI. Remove it and the CSS would simply collapse, like a poorly-supported truss bridge."
+    },
+    {
+      "cat": "vibes",
+      "q": "How does the gradient on the score number make you feel?",
+      "options": [
+        "Seen",
+        "Validated",
+        "Like I belong here",
+        "Like I want to go play again"
+      ],
+      "answer": 3,
+      "why": "All correct. The <code>linear-gradient(90deg, var(--green-1), var(--gold))</code> was tuned to <strong>0.001 of a degree of perfection</strong>. (It was not, but you'd never know.)"
+    },
+    {
+      "cat": "vibes",
+      "q": "What is the optimal number of questions in a sample quiz?",
+      "options": [
+        "However many feels right",
+        "Exactly this many",
+        "One more than is necessary, one less than is too many",
+        "All of the above, simultaneously"
+      ],
+      "answer": 3,
+      "why": "This question exists in a quantum superposition of being the perfect length and one too long. Observation collapses the wavefunction. Don't observe too hard."
+    },
+    {
+      "cat": "vibes",
+      "q": "After taking this quiz, will you recommend the platform to your colleagues?",
+      "options": [
+        "Yes",
+        "Absolutely yes",
+        "I have already opened Slack",
+        "I have already drafted the all-hands announcement"
+      ],
+      "answer": 3,
+      "why": "🎉 <strong>Excellent decision.</strong> Your colleagues will thank you. HR will not. The platform thanks you in advance."
+    }
+  ]
+}

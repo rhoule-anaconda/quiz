@@ -1,0 +1,156 @@
+{
+  "categories": {
+    "anaconda": { "label": "Anaconda",   "icon": "🐍", "bg": "#4d3a1a", "fg": "#ffd58a" },
+    "redteam":  { "label": "Red Team",   "icon": "🎯", "bg": "#4d1a1a", "fg": "#ff8a8a" },
+    "random":   { "label": "Heist Movies","icon": "💰","bg": "#1a334d", "fg": "#8acaff" }
+  },
+  "questions": [
+    {
+      "cat": "redteam",
+      "q": "In offensive security, what's the difference between a red team and a pen test?",
+      "options": [
+        "Pen tests find vulnerabilities; red teams test detection & response under realistic conditions",
+        "Pen tests are external; red teams are internal",
+        "Pen tests are paid; red teams are volunteer",
+        "Pen tests are short; red teams are just longer pen tests"
+      ],
+      "answer": 0,
+      "why": "<strong>Pen test:</strong> goal is to find as many vulns as possible in a defined scope. <strong>Red team:</strong> simulate a real adversary against the org's people, processes, and tools — measure whether the blue team detects and responds. Stealth and emulating a specific threat actor are the point."
+    },
+    {
+      "cat": "redteam",
+      "q": "What does 'C2' (or C&C) stand for in attacker tooling?",
+      "options": [
+        "Compromise & Control",
+        "Command & Control",
+        "Code & Crypto",
+        "Capture & Cutoff"
+      ],
+      "answer": 1,
+      "why": "<strong>Command & Control</strong> — the back-channel an attacker uses to issue instructions to compromised hosts. Cobalt Strike, Sliver, Mythic, and Metasploit are the well-known C2 frameworks. Beacon traffic is what blue teams hunt for."
+    },
+    {
+      "cat": "redteam",
+      "q": "MITRE ATT&CK organizes adversary behavior into what?",
+      "options": [
+        "Tools, Techniques, and Personnel",
+        "Tactics (the why), Techniques (the how), and Procedures (the specific implementation)",
+        "Critical, High, Medium, Low",
+        "Phases of an incident"
+      ],
+      "answer": 1,
+      "why": "TTPs — <strong>Tactics</strong> = goals (e.g., Persistence, Privilege Escalation), <strong>Techniques</strong> = methods to achieve them (e.g., T1053 Scheduled Task), <strong>Procedures</strong> = the specific way an actor implements it. The framework everyone references when describing attacks."
+    },
+    {
+      "cat": "redteam",
+      "q": "An attacker plants files in <code>/var/tmp</code> but everything else looks like normal admin activity. What ATT&CK tactic is this best described as?",
+      "options": [
+        "Initial Access",
+        "Defense Evasion",
+        "Credential Access",
+        "Impact"
+      ],
+      "answer": 1,
+      "why": "<strong>Defense Evasion</strong> (TA0005) — making malicious activity look like routine ops to avoid detection. 'Living off the land' (using legitimate binaries like <code>curl</code>, <code>powershell</code>, <code>certutil</code>) falls in the same bucket."
+    },
+    {
+      "cat": "redteam",
+      "q": "What's the purpose of a 'pretext' in a social engineering engagement?",
+      "options": [
+        "A pre-engagement contract",
+        "A believable cover story that gets the target to take the action you want",
+        "The pre-shared key for the C2",
+        "A pre-attack vulnerability scan"
+      ],
+      "answer": 1,
+      "why": "<strong>Pretext</strong> = the cover story. 'Hi, I'm from IT, we're rolling out new MFA and need you to scan this QR code.' The believability of the pretext is what determines whether phishing/vishing/in-person social engineering succeeds. Frank Abagnale was, in retrospect, mostly a pretext artist."
+    },
+
+    {
+      "cat": "random",
+      "q": "In <em>Ocean's 11</em> (2001), how many casinos does Danny Ocean's crew rob simultaneously?",
+      "options": ["One (the Bellagio)", "Three (Bellagio, Mirage, MGM Grand)", "Eleven", "All of them on the Strip"],
+      "answer": 1,
+      "why": "<strong>Three casinos</strong> — Bellagio, Mirage, MGM Grand — all owned by Terry Benedict, all sharing a single underground vault. The crew is also eleven people, hence the title. The vault itself is a real architectural marvel of fictional security: biometric + key + voice + crash door."
+    },
+    {
+      "cat": "random",
+      "q": "What's the iconic vehicle of choice in <em>The Italian Job</em> (2003 remake)?",
+      "options": ["Aston Martins", "Ferraris", "Mini Coopers", "Fiat 500s"],
+      "answer": 2,
+      "why": "<strong>Three Mini Coopers</strong> (red, white, blue) — small enough to drive through subway tunnels and storm drains. The 1969 original used the same gimmick with classic Minis. The 2003 cast: Mark Wahlberg, Charlize Theron, Jason Statham, Edward Norton."
+    },
+    {
+      "cat": "random",
+      "q": "<em>Heat</em> (1995) features Robert De Niro and Al Pacino on opposite sides of the law. Who plays the thief?",
+      "options": ["Pacino plays the thief", "De Niro plays the thief", "Both are thieves", "Neither — they're both cops"],
+      "answer": 1,
+      "why": "<strong>De Niro</strong> as Neil McCauley (career thief, 'don't let yourself get attached to anything you are not willing to walk out on in 30 seconds flat'). <strong>Pacino</strong> as Lt. Vincent Hanna chasing him. Their diner scene is one of the most studied scenes in film school."
+    },
+    {
+      "cat": "random",
+      "q": "<em>Inside Man</em> (Spike Lee, 2006) is set entirely in what kind of location?",
+      "options": ["A diamond exchange", "A Manhattan bank", "A museum after hours", "A casino vault"],
+      "answer": 1,
+      "why": "<strong>A Manhattan bank.</strong> The whole movie is essentially a hostage standoff at a single bank branch — but the heist isn't what it looks like. Clive Owen is the planner, Denzel Washington is the negotiator, Jodie Foster is the fixer."
+    },
+    {
+      "cat": "random",
+      "q": "In Netflix's <em>Lupin</em>, what jewel does Assane Diop steal in episode one?",
+      "options": [
+        "The Hope Diamond",
+        "Marie Antoinette's necklace, on display at the Louvre",
+        "The Cullinan ruby",
+        "The Star of India"
+      ],
+      "answer": 1,
+      "why": "<strong>Marie Antoinette's necklace</strong>, at a Louvre auction. The series is a modern French homage to Maurice Leblanc's gentleman-thief Arsène Lupin novels (1905+). Omar Sy makes the whole thing work through sheer charisma."
+    },
+    {
+      "cat": "random",
+      "q": "<em>The Bank Job</em> (2008) is loosely based on what real-world heist?",
+      "options": [
+        "The 1971 Baker Street safe-deposit burglary in London",
+        "The 1978 Lufthansa heist (the one in Goodfellas)",
+        "The 1990 Gardner Museum theft",
+        "The 1962 Brink's-Mat robbery"
+      ],
+      "answer": 0,
+      "why": "<strong>The Baker Street robbery.</strong> Real heist, real D-notice (UK gov't gag order) imposed on the press afterward — the rumor is that compromising photos of a royal were in one of the boxes, which is the angle the film runs with. Jason Statham stars."
+    },
+    {
+      "cat": "random",
+      "q": "<em>Now You See Me</em> (2013) combines a heist with what other genre?",
+      "options": ["Cooking competition", "Stage magic / illusionists", "Time travel", "Spy thriller"],
+      "answer": 1,
+      "why": "<strong>Stage magic.</strong> The Four Horsemen — Eisenberg, Harrelson, Fisher, Franco — pull off bank robberies and high-value thefts as part of their magic act. The premise: 'the closer you look, the less you'll see.' Mark Ruffalo is the FBI agent chasing them."
+    },
+
+    {
+      "cat": "anaconda",
+      "q": "What's the name of Anaconda's red-team / vulnerability disclosure platform?",
+      "options": ["HackerOne", "Bugcrowd", "Intigriti", "We don't have one"],
+      "answer": 2,
+      "why": "<strong>Intigriti</strong> runs Anaconda's VDP and bug bounty program. <strong>Cobalt</strong> is the separate vendor used for scoped pentest engagements."
+    },
+    {
+      "cat": "anaconda",
+      "q": "In an Anaconda red-team scenario targeting the package-supply chain, what's the highest-value asset to compromise?",
+      "options": [
+        "An employee's laptop",
+        "The Defaults channel signing key",
+        "The Slack #ask-security channel",
+        "Anyone's GitHub PAT"
+      ],
+      "answer": 1,
+      "why": "<strong>The Defaults signing key</strong> — compromising it means an attacker can publish trojaned packages that millions of conda users would install with full trust. The crown jewel of the supply chain. (Hence why code signing infra has its own Azure EV runbook and dedicated owners.)"
+    },
+    {
+      "cat": "anaconda",
+      "q": "What's the security team's name for the on-duty role that handles inbound noise (Slack, alerts, vendor reviews)?",
+      "options": ["On-call", "On-duty", "Incident Commander", "First responder"],
+      "answer": 1,
+      "why": "<strong>On-duty</strong> — explicitly distinguished from on-call. On-duty runs during regular working hours and shields the rest of the team from operational noise. On-call is a separate 24/7 rotation in OpsGenie."
+    }
+  ]
+}

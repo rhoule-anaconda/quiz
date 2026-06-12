@@ -1,0 +1,384 @@
+{
+  "categories": {
+    "anaconda": {
+      "label": "Anaconda",
+      "icon": "🐍",
+      "bg": "#4d3a1a",
+      "fg": "#ffd58a"
+    },
+    "linux": {
+      "label": "Linux",
+      "icon": "🐧",
+      "bg": "#1a4d22",
+      "fg": "#8aff9a"
+    },
+    "random": {
+      "label": "Sci-Fi & Cyberpunk",
+      "icon": "🤖",
+      "bg": "#3a1a4d",
+      "fg": "#d58aff"
+    }
+  },
+  "questions": [
+    {
+      "cat": "linux",
+      "q": "What does the file mode <code>rwsr-xr-x</code> on an executable indicate?",
+      "options": [
+        "The owner has set a watchpoint on the file",
+        "The setuid bit is set — it runs with the file owner's privileges",
+        "The file is sticky and can't be deleted",
+        "The file is a symlink"
+      ],
+      "answer": 1,
+      "why": "The <code>s</code> in the owner-execute slot is the <strong>setuid</strong> bit. Common on <code>passwd</code>, <code>sudo</code>, <code>ping</code>. Setuid root binaries are a classic privesc target — audit them with <code>find / -perm -4000</code>."
+    },
+    {
+      "cat": "linux",
+      "q": "Which file stores hashed user passwords on a modern Linux system?",
+      "options": [
+        "/etc/passwd",
+        "/etc/shadow",
+        "/etc/group",
+        "/etc/security/hash"
+      ],
+      "answer": 1,
+      "why": "<code>/etc/passwd</code> is world-readable and stores user metadata. <strong>/etc/shadow</strong> is root-readable only and holds the hashed passwords (yescrypt, sha512crypt, etc.)."
+    },
+    {
+      "cat": "linux",
+      "q": "What does a SUID-set <code>/bin/bash</code> let an attacker do?",
+      "options": [
+        "Run a shell as root if root owns the binary",
+        "Bypass SELinux entirely",
+        "Nothing — bash drops SUID by default",
+        "Trigger a kernel panic"
+      ],
+      "answer": 2,
+      "why": "Bash and most shells <strong>drop privileges</strong> when SUID is set unless invoked with <code>-p</code>. So a naked SUID bash isn't an instant root shell, but <code>bash -p</code> is. GTFOBins documents the real escapes."
+    },
+    {
+      "cat": "linux",
+      "q": "What does <code>ss -tlnp</code> show?",
+      "options": [
+        "Running services as a tree",
+        "Listening TCP sockets with the owning process",
+        "Active SSH sessions",
+        "Sysctl kernel parameters"
+      ],
+      "answer": 1,
+      "why": "<code>-t</code> TCP, <code>-l</code> listening, <code>-n</code> numeric, <code>-p</code> process. <code>ss</code> replaced <code>netstat</code> from the deprecated <code>net-tools</code> package."
+    },
+    {
+      "cat": "linux",
+      "q": "Where do you usually look first to investigate a successful sudo on a RHEL/Amazon Linux box?",
+      "options": [
+        "/var/log/auth.log",
+        "/var/log/secure",
+        "/var/log/sudo.log",
+        "/etc/sudoers"
+      ],
+      "answer": 1,
+      "why": "On RHEL-family (incl. Amazon Linux), auth events go to <strong>/var/log/secure</strong>. Debian/Ubuntu uses <code>/var/log/auth.log</code>. On systemd, <code>journalctl _COMM=sudo</code> works on both."
+    },
+    {
+      "cat": "linux",
+      "q": "What's the practical difference between SELinux Enforcing and Permissive mode?",
+      "options": [
+        "Permissive disables SELinux entirely",
+        "Permissive logs denials but doesn't block; Enforcing blocks and logs",
+        "Enforcing requires a reboot to change; Permissive doesn't",
+        "Permissive is for kernel modules; Enforcing is for userspace"
+      ],
+      "answer": 1,
+      "why": "<strong>Permissive</strong> = log-only (great for debugging policy). <strong>Enforcing</strong> = log + block. Disabled = SELinux off entirely (different from permissive). <code>setenforce 0</code> drops to permissive at runtime."
+    },
+    {
+      "cat": "linux",
+      "q": "An attacker has a low-priv shell. Which capability on a binary is essentially game over?",
+      "options": [
+        "cap_net_raw",
+        "cap_sys_admin",
+        "cap_chown",
+        "cap_dac_override"
+      ],
+      "answer": 1,
+      "why": "<strong>CAP_SYS_ADMIN</strong> is sometimes called 'the new root' — it grants such a wide range of admin operations (mount, swapon, namespace creation, etc.) that having it on a binary is effectively root. <code>cap_dac_override</code> is also brutal — bypasses file permission checks."
+    },
+    {
+      "cat": "linux",
+      "q": "What does <code>chmod 777 /tmp</code> on a fresh box overlook?",
+      "options": [
+        "Nothing, /tmp should be 777",
+        "The sticky bit (1777) — without it, anyone can delete anyone's files",
+        "/tmp should be 755 for security",
+        "The setuid bit"
+      ],
+      "answer": 1,
+      "why": "<code>/tmp</code> should be <strong>1777</strong> — the leading <code>1</code> is the <strong>sticky bit</strong>, which restricts deletion to the file owner. Without it, any user could delete any other user's files in /tmp."
+    },
+    {
+      "cat": "linux",
+      "q": "You see this in <code>~/.ssh/authorized_keys</code>: <code>command=\"/bin/bash\" no-pty ssh-rsa AAAA...</code>. What's worth flagging?",
+      "options": [
+        "Nothing, this is a normal SSH key",
+        "<code>command=\"/bin/bash\"</code> overrides the user's shell — common for backdoor persistence",
+        "<code>no-pty</code> means the key is invalid",
+        "RSA keys are deprecated"
+      ],
+      "answer": 1,
+      "why": "<code>command=\"...\"</code> forces a specific command on connect — legit for restricted keys, but also a classic <strong>persistence trick</strong> for attackers, who pair it with <code>no-pty</code> and other options to fly under the radar."
+    },
+    {
+      "cat": "linux",
+      "q": "What's in <code>/proc/[pid]/maps</code>?",
+      "options": [
+        "The process's network connections",
+        "The process's memory map — every loaded library, heap, stack",
+        "The process's open files",
+        "The process's syscall history"
+      ],
+      "answer": 1,
+      "why": "<code>/proc/[pid]/maps</code> is the live <strong>memory layout</strong> for a process. Useful for reverse engineering, ASLR analysis, and locating injected code. <code>/proc/[pid]/fd</code> is open files; <code>/proc/[pid]/net/tcp</code> for sockets."
+    },
+    {
+      "cat": "random",
+      "q": "In <em>The Matrix</em>, what color pill does Neo take?",
+      "options": [
+        "Blue",
+        "Red",
+        "Green",
+        "He doesn't take one"
+      ],
+      "answer": 1,
+      "why": "<strong>Red pill</strong> — see how deep the rabbit hole goes. Blue pill = wake up in bed, believe whatever you want."
+    },
+    {
+      "cat": "random",
+      "q": "What is HAL 9000's signature line in <em>2001: A Space Odyssey</em>?",
+      "options": [
+        "I'll be back.",
+        "I'm sorry, Dave. I'm afraid I can't do that.",
+        "Resistance is futile.",
+        "Open the airlock, Dave."
+      ],
+      "answer": 1,
+      "why": "<strong>HAL refusing to open the pod bay doors</strong> — possibly the most quoted AI-villain line in cinema. Fun trivia: shift each letter of 'HAL' forward by one and you get 'IBM'. (Arthur C. Clarke insisted that was a coincidence.)"
+    },
+    {
+      "cat": "random",
+      "q": "In <em>Star Wars</em>, what does R2-D2 carry that kicks off the whole plot?",
+      "options": [
+        "A map to Luke",
+        "The Death Star plans",
+        "Princess Leia's holographic message",
+        "Both the Death Star plans AND Leia's message"
+      ],
+      "answer": 3,
+      "why": "<strong>Both</strong> — R2 is hand-delivering Leia's plea to Obi-Wan AND the stolen Death Star schematics. The original 'sneakernet exfiltration' plot device."
+    },
+    {
+      "cat": "random",
+      "q": "<em>Blade Runner</em>'s replicant-detection test is called what?",
+      "options": [
+        "The Turing Test",
+        "The Voight-Kampff Test",
+        "The Pinocchio Protocol",
+        "The Empathy Index"
+      ],
+      "answer": 1,
+      "why": "<strong>Voight-Kampff</strong> — measures empathic response to provocative questions. Used by Blade Runners to identify replicants who pass as human."
+    },
+    {
+      "cat": "random",
+      "q": "In <em>Star Trek</em>, what's the standard greeting from a Vulcan?",
+      "options": [
+        "Beam me up.",
+        "Live long and prosper.",
+        "Make it so.",
+        "Engage."
+      ],
+      "answer": 1,
+      "why": "<strong>'Live long and prosper.'</strong> Spock's signature. Paired with the Vulcan salute — the hand sign Leonard Nimoy borrowed from a Jewish priestly blessing he saw as a kid."
+    },
+    {
+      "cat": "random",
+      "q": "What movie's villain becomes self-aware, takes over the U.S. nuclear arsenal, and tries to wipe out humanity?",
+      "options": [
+        "The Matrix",
+        "The Terminator",
+        "WarGames",
+        "Ex Machina"
+      ],
+      "answer": 1,
+      "why": "<strong>The Terminator</strong> — Skynet goes live August 29, 1997, becomes self-aware at 2:14 AM, and launches the nukes when humans try to pull the plug. The original AI alignment failure."
+    },
+    {
+      "cat": "random",
+      "q": "In <em>Back to the Future</em>, what speed does the DeLorean need to reach to time travel?",
+      "options": [
+        "55 mph",
+        "88 mph",
+        "99 mph",
+        "100 mph"
+      ],
+      "answer": 1,
+      "why": "<strong>88 miles per hour</strong>, with 1.21 gigawatts. Doc picked 88 because it 'looked cool on the speedometer.'"
+    },
+    {
+      "cat": "random",
+      "q": "What franchise gave us 'I'll be back'?",
+      "options": [
+        "Die Hard",
+        "The Terminator",
+        "RoboCop",
+        "Predator"
+      ],
+      "answer": 1,
+      "why": "<strong>The Terminator (1984)</strong>. Schwarzenegger originally wanted 'I will be back' (more robotic), but James Cameron insisted on the contraction. AFI ranks it among the top 50 movie quotes ever."
+    },
+    {
+      "cat": "random",
+      "q": "In <em>Tron</em>, programs inside the computer call their human creators by what name?",
+      "options": [
+        "Gods",
+        "Users",
+        "The Old Ones",
+        "Coders"
+      ],
+      "answer": 1,
+      "why": "<strong>Users</strong> — programs inside the system worship and obey their Users (the people who wrote them). The film's whole premise. Also where the Linux <code>/usr</code> ambiguity probably should have gone, instead of 'Unix System Resources.'"
+    },
+    {
+      "cat": "random",
+      "q": "Which sci-fi movie features sentient machines that grow humans in pods to use as batteries?",
+      "options": [
+        "The Matrix",
+        "Westworld",
+        "Ex Machina",
+        "Blade Runner"
+      ],
+      "answer": 0,
+      "why": "<strong>The Matrix</strong>. Note: this premise makes basically zero thermodynamic sense (you'd get more energy by feeding the humans directly to a generator), but it's iconic anyway. Allegedly the original script had humans-as-distributed-CPU, which would have been more accurate but harder to film."
+    },
+    {
+      "cat": "random",
+      "q": "What does C-3PO say his function is in <em>Star Wars</em>?",
+      "options": [
+        "Pilot",
+        "Protocol droid, fluent in over six million forms of communication",
+        "Astromech",
+        "Diplomatic translator for the Galactic Senate"
+      ],
+      "answer": 1,
+      "why": "<strong>Protocol droid, fluent in over six million forms of communication.</strong> R2-D2 is the astromech. C-3PO complains about literally everything for nine films straight."
+    },
+    {
+      "cat": "random",
+      "q": "In <em>Dune</em>, what's the most valuable substance in the universe?",
+      "options": [
+        "Unobtanium",
+        "Dilithium",
+        "Spice (melange)",
+        "Vibranium"
+      ],
+      "answer": 2,
+      "why": "<strong>Spice / melange</strong> — found only on Arrakis. Enables faster-than-light navigation, extended life, and prescience. 'He who controls the spice controls the universe.'"
+    },
+    {
+      "cat": "random",
+      "q": "In <em>Ex Machina</em>, what's the name of the AI that Caleb is brought in to evaluate?",
+      "options": [
+        "Eve",
+        "Ava",
+        "Samantha",
+        "Skynet"
+      ],
+      "answer": 1,
+      "why": "<strong>Ava</strong>. Designed by reclusive tech CEO Nathan, who tasks Caleb with running a Turing-test variant on her. Spoiler: Ava passes the test in ways nobody expected."
+    },
+    {
+      "cat": "random",
+      "q": "In <em>Star Trek</em>, what does the captain say to start the warp drive?",
+      "options": [
+        "Beam me up",
+        "Engage",
+        "Make it so",
+        "Punch it"
+      ],
+      "answer": 1,
+      "why": "<strong>'Engage.'</strong> Picard's signature command, usually paired with a finger-point at the viewscreen. 'Make it so' is what he says when delegating an order to Riker."
+    },
+    {
+      "cat": "random",
+      "q": "What's the name of the dystopian megacorp in <em>RoboCop</em> (1987)?",
+      "options": [
+        "Weyland-Yutani",
+        "Cyberdyne Systems",
+        "Omni Consumer Products (OCP)",
+        "Tyrell Corporation"
+      ],
+      "answer": 2,
+      "why": "<strong>OCP</strong> runs Detroit. Weyland-Yutani is <em>Alien</em>, Cyberdyne is <em>Terminator</em>, Tyrell makes the replicants in <em>Blade Runner</em>. All four are perfect cyberpunk-villain-corp names."
+    },
+    {
+      "cat": "anaconda",
+      "q": "What was Anaconda Inc. originally called?",
+      "options": [
+        "Continuum Analytics",
+        "Conda Corp",
+        "Python Labs",
+        "Anaconda Systems"
+      ],
+      "answer": 0,
+      "why": "Anaconda Inc. was originally <strong>Continuum Analytics</strong>. Conda was derived and created from Continuum members."
+    },
+    {
+      "cat": "anaconda",
+      "q": "\"Be the kitten\" — what does this internal Anaconda phrase mean?",
+      "options": [
+        "Move fast and break things",
+        "Approach change with curiosity instead of fear",
+        "Stay small to stay agile",
+        "A code name for a stealth product"
+      ],
+      "answer": 1,
+      "why": "From the April 2022 All-Hands — Peter talked about change in the context of fear vs. <strong>curiosity</strong>. The kitten shows up at 8:55 in the recording."
+    },
+    {
+      "cat": "anaconda",
+      "q": "The Anaconda \"defaults\" channel is actually three channels. Which three?",
+      "options": [
+        "main, r, msys2",
+        "main, conda-forge, bioconda",
+        "stable, beta, alpha",
+        "linux, win, osx"
+      ],
+      "answer": 0,
+      "why": "Defaults = <strong>main</strong> (general), <strong>r</strong> (R packages), and <strong>msys2</strong> (Windows libraries)."
+    },
+    {
+      "cat": "anaconda",
+      "q": "What is \"Perseverance\" inside Anaconda?",
+      "options": [
+        "An OKR theme for 2026",
+        "The team in the Distribution org that builds and maintains Defaults",
+        "The internal name for Package Security Manager",
+        "Anaconda's penetration-testing program"
+      ],
+      "answer": 1,
+      "why": "Perseverance is the team that maintains the <strong>Defaults</strong> repository — CVE curation, marquee packages, customer-requested builds."
+    },
+    {
+      "cat": "anaconda",
+      "q": "What does <code>conda</code>'s name actually come from?",
+      "options": [
+        "Short for 'Anaconda'",
+        "It's an acronym (Cross-platform Open-source Native Distribution Application)",
+        "From the Python snake imagery",
+        "Named after a Brazilian river"
+      ],
+      "answer": 0,
+      "why": "Just a <strong>shortening of 'Anaconda'</strong>. No fancy acronym. Conda is itself open source with community governance — separate from the Anaconda Distribution."
+    }
+  ]
+}

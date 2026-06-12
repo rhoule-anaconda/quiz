@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>{{TITLE}}</title>
+<style>
+  :root {
+    --green-1: #43b02a;
+    --green-2: #2d7d1f;
+    --green-3: #0f4c1a;
+    --bg: #0a1410;
+    --panel: #11261b;
+    --panel-2: #173524;
+    --text: #e8f5ec;
+    --muted: #8fbf95;
+    --gold: #f1c40f;
+    --red: #e74c3c;
+    --shadow: 0 10px 40px rgba(0,0,0,0.5);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: radial-gradient(ellipse at top, #1a3325 0%, var(--bg) 60%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    min-height: 100vh;
+  }
+  body {
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .app {
+    width: 100%;
+    max-width: 760px;
+    background: var(--panel);
+    border: 1px solid #1f4a30;
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .header {
+    padding: 22px 28px;
+    background: linear-gradient(135deg, var(--green-3) 0%, var(--green-2) 100%);
+    border-bottom: 1px solid #0a3517;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .header h1 {
+    margin: 0;
+    font-size: 20px;
+    letter-spacing: 0.5px;
+  }
+  .header .meta {
+    font-size: 13px;
+    color: rgba(255,255,255,0.85);
+  }
+  .progress {
+    height: 6px;
+    background: #0a3517;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green-1), var(--gold));
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+  .body {
+    padding: 32px 28px;
+    min-height: 360px;
+  }
+  .start, .end {
+    text-align: center;
+    padding: 20px 0;
+  }
+  .start h2, .end h2 {
+    font-size: 28px;
+    margin: 0 0 10px;
+    background: linear-gradient(90deg, var(--green-1), var(--gold));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .start p {
+    color: var(--muted);
+    margin: 0 0 24px;
+    line-height: 1.5;
+  }
+  .snake {
+    font-size: 64px;
+    margin: 8px 0 18px;
+    filter: drop-shadow(0 4px 8px rgba(67,176,42,0.4));
+  }
+  .badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 14px;
+    background: #1a334d;
+    color: #8acaff;
+  }
+  .question {
+    font-size: 19px;
+    line-height: 1.45;
+    margin: 0 0 22px;
+    color: var(--text);
+  }
+  .options {
+    display: grid;
+    gap: 10px;
+  }
+  .option {
+    background: var(--panel-2);
+    border: 1px solid #1f4a30;
+    color: var(--text);
+    text-align: left;
+    padding: 14px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    line-height: 1.4;
+    transition: transform 0.08s ease, background 0.15s ease, border-color 0.15s ease;
+    font-family: inherit;
+  }
+  .option:hover:not(:disabled) {
+    background: #1d3f2a;
+    border-color: var(--green-1);
+    transform: translateY(-1px);
+  }
+  .option:disabled { cursor: default; }
+  .option.correct {
+    background: #1a4d22;
+    border-color: var(--green-1);
+    color: #c5ffd0;
+  }
+  .option.wrong {
+    background: #4d1a1a;
+    border-color: var(--red);
+    color: #ffc9c9;
+  }
+  .option.dim { opacity: 0.55; }
+
+  code {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.05);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.92em;
+  }
+
+  .feedback {
+    margin-top: 18px;
+    padding: 14px 16px;
+    background: #0e1f15;
+    border-left: 3px solid var(--green-1);
+    border-radius: 6px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .feedback strong { color: var(--gold); }
+
+  .footer {
+    padding: 16px 28px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-top: 1px solid #1f4a30;
+    background: #0c1e14;
+  }
+  .score {
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .score b { color: var(--gold); }
+  button.primary {
+    background: linear-gradient(135deg, var(--green-1), var(--green-2));
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 11px 22px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    letter-spacing: 0.4px;
+    font-family: inherit;
+    transition: transform 0.08s ease, box-shadow 0.15s ease;
+  }
+  button.primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(67,176,42,0.35);
+  }
+  button.primary:disabled {
+    opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none;
+  }
+  .end .score-big {
+    font-size: 64px;
+    font-weight: 700;
+    color: var(--gold);
+    margin: 8px 0;
+  }
+  .end .verdict {
+    font-size: 18px;
+    color: var(--muted);
+    margin: 0 0 24px;
+  }
+  .breakdown {
+    display: flex; justify-content: center; gap: 20px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .breakdown .pill {
+    background: var(--panel-2);
+    border: 1px solid #1f4a30;
+    border-radius: 24px;
+    padding: 8px 16px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .breakdown .pill b { color: var(--text); }
+
+  @media (max-width: 600px) {
+    .body { padding: 24px 20px; }
+    .header { padding: 18px 20px; }
+    .footer { padding: 14px 20px 20px; }
+    .question { font-size: 17px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>🐍 {{TITLE}}</h1>
+    <div class="meta" id="meta">Question <span id="qnum">0</span> / <span id="qtotal">0</span></div>
+  </div>
+  <div class="progress"><div class="progress-bar" id="progress"></div></div>
+  <div class="body" id="body"></div>
+  <div class="footer">
+    <div class="score">Score: <b id="score">0</b></div>
+    <button class="primary" id="next" disabled>Next →</button>
+  </div>
+</div>
+
+<script id="quiz-data" type="application/json">{{QUESTIONS_JSON}}</script>
+<script>
+const TITLE = {{TITLE_JSON}};
+const CONFIG = JSON.parse(document.getElementById("quiz-data").textContent);
+const QUESTIONS = CONFIG.questions;
+const CATEGORIES = CONFIG.categories || {};
+
+// distinct, soft palette for category badges
+const BADGE_PALETTE = [
+  { bg: "#4d1a1a", fg: "#ff8a8a" },
+  { bg: "#1a4d22", fg: "#8aff9a" },
+  { bg: "#1a334d", fg: "#8acaff" },
+  { bg: "#4d3a1a", fg: "#ffd58a" },
+  { bg: "#3a1a4d", fg: "#d58aff" },
+  { bg: "#1a4d4a", fg: "#8affe8" }
+];
+
+// auto-build category metadata: { key: { label, color } }
+const catKeys = [...new Set(QUESTIONS.map(q => q.cat))];
+const CAT_META = {};
+catKeys.forEach((k, i) => {
+  const supplied = CATEGORIES[k] || {};
+  const palette = BADGE_PALETTE[i % BADGE_PALETTE.length];
+  CAT_META[k] = {
+    label: supplied.label || k.charAt(0).toUpperCase() + k.slice(1),
+    icon: supplied.icon || "•",
+    bg: supplied.bg || palette.bg,
+    fg: supplied.fg || palette.fg
+  };
+});
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+const state = {
+  questions: shuffle(QUESTIONS),
+  index: -1,
+  score: 0,
+  byCat: Object.fromEntries(catKeys.map(k => [k, { c: 0, t: 0 }])),
+  answered: false
+};
+
+const $body = document.getElementById("body");
+const $next = document.getElementById("next");
+const $score = document.getElementById("score");
+const $progress = document.getElementById("progress");
+const $qnum = document.getElementById("qnum");
+const $qtotal = document.getElementById("qtotal");
+const $meta = document.getElementById("meta");
+
+$qtotal.textContent = state.questions.length;
+
+function catLine() {
+  return catKeys
+    .map(k => `<strong style="color:${CAT_META[k].fg}">${CAT_META[k].label}</strong>`)
+    .join(" · ");
+}
+
+function renderStart() {
+  $meta.style.visibility = "hidden";
+  $progress.style.width = "0%";
+  $body.innerHTML = `
+    <div class="start">
+      <div class="snake">🐍</div>
+      <h2>${TITLE}</h2>
+      <p>${state.questions.length} questions across:<br/>${catLine()}</p>
+      <p>Click an answer. You'll see why it's right (or wrong) before moving on.<br/>
+      No partial credit. No hints. No ties.</p>
+    </div>
+  `;
+  $next.disabled = false;
+  $next.textContent = "Start →";
+  $next.onclick = () => {
+    state.index = 0;
+    renderQuestion();
+  };
+}
+
+function renderQuestion() {
+  $meta.style.visibility = "visible";
+  state.answered = false;
+  const q = state.questions[state.index];
+  $qnum.textContent = state.index + 1;
+  $progress.style.width = `${(state.index / state.questions.length) * 100}%`;
+  const meta = CAT_META[q.cat];
+  $body.innerHTML = `
+    <span class="badge" style="background:${meta.bg};color:${meta.fg}">${meta.icon} ${meta.label}</span>
+    <div class="question">${q.q}</div>
+    <div class="options" id="options"></div>
+    <div id="feedback"></div>
+  `;
+  const $options = document.getElementById("options");
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement("button");
+    btn.className = "option";
+    btn.innerHTML = opt;
+    btn.onclick = () => selectAnswer(i);
+    $options.appendChild(btn);
+  });
+  $next.disabled = true;
+  $next.textContent = state.index === state.questions.length - 1 ? "See results →" : "Next →";
+  $next.onclick = () => advance();
+}
+
+function selectAnswer(i) {
+  if (state.answered) return;
+  state.answered = true;
+  const q = state.questions[state.index];
+  const buttons = document.querySelectorAll(".option");
+  state.byCat[q.cat].t += 1;
+  if (i === q.answer) {
+    state.score += 1;
+    state.byCat[q.cat].c += 1;
+  }
+  buttons.forEach((b, idx) => {
+    b.disabled = true;
+    if (idx === q.answer) b.classList.add("correct");
+    else if (idx === i) b.classList.add("wrong");
+    else b.classList.add("dim");
+  });
+  $score.textContent = state.score;
+  document.getElementById("feedback").innerHTML = `
+    <div class="feedback">${i === q.answer ? "✅ <strong>Correct.</strong>" : "❌ <strong>Not quite.</strong>"} ${q.why}</div>
+  `;
+  $next.disabled = false;
+  $progress.style.width = `${((state.index + 1) / state.questions.length) * 100}%`;
+}
+
+function advance() {
+  if (state.index < state.questions.length - 1) {
+    state.index += 1;
+    renderQuestion();
+  } else {
+    renderEnd();
+  }
+}
+
+function verdict(score, total) {
+  const pct = score / total;
+  if (pct === 1) return "🏆 Flawless. Are you sure you didn't write this?";
+  if (pct >= 0.85) return "🐍 Apex predator. The team's real CISO.";
+  if (pct >= 0.7) return "🛡️ Solid. You've earned your on-duty pager.";
+  if (pct >= 0.5) return "🤔 Respectable. A few CVEs got past you.";
+  if (pct >= 0.3) return "📚 Time to re-read the runbooks.";
+  return "🎣 You'd click the phishing link. Sorry.";
+}
+
+function renderEnd() {
+  $meta.style.visibility = "hidden";
+  $progress.style.width = "100%";
+  const total = state.questions.length;
+  const pills = catKeys.map(k => {
+    const m = CAT_META[k];
+    return `<div class="pill">${m.icon} ${m.label} <b>${state.byCat[k].c}/${state.byCat[k].t}</b></div>`;
+  }).join("");
+  $body.innerHTML = `
+    <div class="end">
+      <div class="snake">🐍</div>
+      <h2>Quiz Complete</h2>
+      <div class="score-big">${state.score} / ${total}</div>
+      <div class="verdict">${verdict(state.score, total)}</div>
+      <div class="breakdown">${pills}</div>
+    </div>
+  `;
+  $next.textContent = "Play again ↻";
+  $next.disabled = false;
+  $next.onclick = () => {
+    state.questions = shuffle(QUESTIONS);
+    state.index = -1;
+    state.score = 0;
+    state.byCat = Object.fromEntries(catKeys.map(k => [k, { c: 0, t: 0 }]));
+    $score.textContent = "0";
+    renderStart();
+  };
+}
+
+renderStart();
+</script>
+</body>
+</html>

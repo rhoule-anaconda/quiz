@@ -1,0 +1,281 @@
+{
+  "categories": {
+    "anaconda": { "label": "Anaconda", "icon": "🐍", "bg": "#1a4d22", "fg": "#8aff9a" },
+    "security": { "label": "Security", "icon": "🔒", "bg": "#4d1a1a", "fg": "#ff8a8a" },
+    "random":   { "label": "Spy & Hacker Movies", "icon": "🎬", "bg": "#1a334d", "fg": "#8acaff" }
+  },
+  "questions": [
+    {
+      "cat": "anaconda",
+      "q": "What was Anaconda Inc. originally called?",
+      "options": ["Continuum Analytics", "Conda Corp", "Python Labs", "Anaconda Systems"],
+      "answer": 0,
+      "why": "Anaconda Inc. was originally <strong>Continuum Analytics</strong>. Conda was derived and created from Continuum members."
+    },
+    {
+      "cat": "anaconda",
+      "q": "\"Be the kitten\" — what does this internal Anaconda phrase mean?",
+      "options": [
+        "Move fast and break things",
+        "Approach change with curiosity instead of fear",
+        "Stay small to stay agile",
+        "A code name for a stealth product"
+      ],
+      "answer": 1,
+      "why": "From the April 2022 All-Hands — Peter talked about change in the context of fear vs. <strong>curiosity</strong>. The kitten shows up at 8:55 in the recording."
+    },
+    {
+      "cat": "anaconda",
+      "q": "Which Jira project does the Security team use for active sprint work (not the queue)?",
+      "options": ["SOTERIA", "AEGIS", "SECNOW", "SHIELD"],
+      "answer": 1,
+      "why": "<strong>AEGIS</strong> is the Security Team board. <strong>SOTERIA</strong> is the Security Now queue for unparented incoming items."
+    },
+    {
+      "cat": "anaconda",
+      "q": "Which security tool is Anaconda *replacing* with Socket.dev for supply-chain scanning?",
+      "options": ["Snyk", "Halo", "GuardDuty", "Cloudflare"],
+      "answer": 0,
+      "why": "Per the Security Tools Ownership Register: Socket.dev is replacing <strong>Snyk</strong>. Snyk is retained for historical reference."
+    },
+    {
+      "cat": "anaconda",
+      "q": "Which is the Vulnerability Disclosure Program / bug bounty platform Anaconda uses?",
+      "options": ["HackerOne", "Bugcrowd", "Intigriti", "YesWeHack"],
+      "answer": 2,
+      "why": "<strong>Intigriti</strong> runs Anaconda's VDP / bug bounty. Cobalt is the separate pentest vendor."
+    },
+
+    {
+      "cat": "security",
+      "q": "The first computer bug was a literal bug. What was it?",
+      "options": ["A spider on a vacuum tube", "A moth in a relay of the Harvard Mark II", "A cricket in an ENIAC fan", "A beetle in punch-card stock"],
+      "answer": 1,
+      "why": "September 9, 1947 — Grace Hopper's team taped a <strong>moth</strong> into the Mark II logbook with the note 'first actual case of bug being found.'"
+    },
+    {
+      "cat": "security",
+      "q": "What does CVE stand for?",
+      "options": [
+        "Critical Vulnerability Event",
+        "Common Vulnerabilities and Exposures",
+        "Cybersecurity Verification Entry",
+        "Coordinated Vendor Exploit"
+      ],
+      "answer": 1,
+      "why": "<strong>Common Vulnerabilities and Exposures</strong>, registered with the NVD at NIST. Anaconda's package team curates them for repos."
+    },
+    {
+      "cat": "security",
+      "q": "What category of attack is Log4Shell (CVE-2021-44228)?",
+      "options": [
+        "SQL Injection",
+        "Cross-Site Scripting",
+        "Remote Code Execution via JNDI lookup",
+        "Buffer overflow"
+      ],
+      "answer": 2,
+      "why": "RCE via JNDI lookup in Log4j — a single string like <code>${jndi:ldap://...}</code> in a logged field popped half the internet."
+    },
+    {
+      "cat": "security",
+      "q": "The 2024 XZ Utils backdoor (CVE-2024-3094) was inserted by an attacker using what alias?",
+      "options": ["Jia Tan", "Mr. Robot", "Phineas Fisher", "ShadowBroker"],
+      "answer": 0,
+      "why": "<strong>Jia Tan</strong> spent ~2 years building maintainer trust before slipping a backdoor into liblzma. Andres Freund caught it from a 500ms SSH delay."
+    },
+    {
+      "cat": "security",
+      "q": "What does the OWASP Top 10 rank?",
+      "options": [
+        "The most critical web application security risks",
+        "The fastest-growing CVEs",
+        "Preferred password hashing algorithms",
+        "The top 10 worst CISOs of the year"
+      ],
+      "answer": 0,
+      "why": "OWASP Top 10 — most critical <strong>web app</strong> security risks. Currently A01: Broken Access Control sits at #1."
+    },
+    {
+      "cat": "security",
+      "q": "Heartbleed exploited a buffer over-read in which library?",
+      "options": ["GnuTLS", "BoringSSL", "OpenSSL", "wolfSSL"],
+      "answer": 2,
+      "why": "<strong>OpenSSL</strong> — a missing bounds check in the TLS heartbeat extension leaked up to 64KB of server memory per request. Disclosed April 2014."
+    },
+    {
+      "cat": "security",
+      "q": "What's the difference between symmetric and asymmetric encryption (in one phrase)?",
+      "options": [
+        "Symmetric is faster but less secure",
+        "Symmetric uses one shared key; asymmetric uses a key pair (public/private)",
+        "Asymmetric only works on text, symmetric works on binary",
+        "Symmetric is for storage, asymmetric for transit"
+      ],
+      "answer": 1,
+      "why": "Symmetric = one shared secret (AES). Asymmetric = key pair (RSA, ECC). TLS uses asymmetric to exchange a symmetric key, then symmetric for the bulk traffic."
+    },
+    {
+      "cat": "security",
+      "q": "Who released the Morris Worm in 1988, accidentally taking down ~10% of the internet?",
+      "options": [
+        "Kevin Mitnick",
+        "Robert Tappan Morris (a Cornell grad student)",
+        "Adrian Lamo",
+        "Gary McKinnon"
+      ],
+      "answer": 1,
+      "why": "Robert Tappan Morris, a Cornell grad student, was the first person convicted under the U.S. Computer Fraud and Abuse Act. He's now an MIT professor."
+    },
+    {
+      "cat": "security",
+      "q": "In the CIA triad, what does the 'I' stand for?",
+      "options": ["Identity", "Integrity", "Isolation", "Intelligence"],
+      "answer": 1,
+      "why": "<strong>Confidentiality, Integrity, Availability</strong> — the foundational triad. Integrity = data hasn't been tampered with."
+    },
+    {
+      "cat": "security",
+      "q": "What is the actual purpose of HTTP status code 418?",
+      "options": [
+        "Rate limiting",
+        "Authentication required (legacy)",
+        "A joke from RFC 2324: \"I'm a teapot\"",
+        "Reserved for IoT devices"
+      ],
+      "answer": 2,
+      "why": "RFC 2324 — Hyper Text Coffee Pot Control Protocol (HTCPCP). An April Fools' RFC from 1998. <strong>\"I'm a teapot\"</strong> means the server refuses to brew coffee because it is a teapot."
+    },
+
+    {
+      "cat": "random",
+      "q": "In <em>Hackers</em> (1995), what's Dade Murphy's hacker handle?",
+      "options": ["Crash Override", "Acid Burn", "Zero Cool", "Both Crash Override AND Zero Cool"],
+      "answer": 3,
+      "why": "Dade is <strong>Zero Cool</strong> as a kid (the 1988 stock market crash) and goes by <strong>Crash Override</strong> after his ban expires. <em>Hack the planet!</em>"
+    },
+    {
+      "cat": "random",
+      "q": "In <em>The Matrix</em> (1999), what real CLI tool does Trinity actually use to break into the power grid?",
+      "options": [
+        "metasploit",
+        "nmap (with a real CVE: SSH1 CRC32 exploit)",
+        "John the Ripper",
+        "She made it up — it was prop dialogue"
+      ],
+      "answer": 1,
+      "why": "Trinity runs <code>nmap</code> against a host, finds SSH1, and exploits <strong>CVE-2001-0144</strong> (the SSHv1 CRC32 compensation attack). One of the most technically accurate hacking scenes ever filmed."
+    },
+    {
+      "cat": "random",
+      "q": "<em>Mr. Robot</em> protagonist Elliot Alderson works at a fictional cybersecurity firm called what?",
+      "options": ["AllSafe Cybersecurity", "E Corp", "fsociety", "Steel Mountain"],
+      "answer": 0,
+      "why": "<strong>AllSafe</strong> protects <strong>E Corp</strong> (Evil Corp) — the company Elliot's hacktivist group <strong>fsociety</strong> is trying to take down. Steel Mountain is the data backup facility they target."
+    },
+    {
+      "cat": "random",
+      "q": "James Bond's gadget-supplying quartermaster is known as what single letter?",
+      "options": ["M", "Q", "X", "K"],
+      "answer": 1,
+      "why": "<strong>Q</strong>, head of Q Branch (Quartermaster). Played most famously by Desmond Llewelyn (17 films) and now Ben Whishaw. <strong>M</strong> is Bond's boss."
+    },
+    {
+      "cat": "random",
+      "q": "In <em>Sneakers</em> (1992), what does the magic decryption box actually break?",
+      "options": [
+        "AES",
+        "Any cryptographic system (it's a black-box that solves discrete log)",
+        "Just RSA",
+        "DES only"
+      ],
+      "answer": 1,
+      "why": "The MacGuffin chip in <em>Sneakers</em> is presented as breaking <strong>any cryptosystem based on discrete logarithm or factoring</strong> — i.e., it kills RSA, DH, DSA, ECDSA all at once. Basically a fictional quantum computer, 25 years early."
+    },
+    {
+      "cat": "random",
+      "q": "Which spy franchise gave us the line: 'I'm getting too old for this sh*t'?",
+      "options": ["James Bond", "Lethal Weapon", "Mission: Impossible", "Bourne"],
+      "answer": 1,
+      "why": "<strong>Roger Murtaugh in Lethal Weapon</strong>. Not technically a spy movie but firmly in the action canon — said in every single one of the four films."
+    },
+    {
+      "cat": "random",
+      "q": "In <em>WarGames</em> (1983), what's the name of the WOPR's password-cracking AI personality?",
+      "options": ["Joshua", "HAL", "Skynet", "Mother"],
+      "answer": 0,
+      "why": "<strong>Joshua</strong> — the password is the name of Falken's deceased son. The famous final line: 'A strange game. The only winning move is not to play.'"
+    },
+    {
+      "cat": "random",
+      "q": "<em>Tinker Tailor Soldier Spy</em> centers on hunting which kind of spy inside MI6?",
+      "options": [
+        "A double agent (mole)",
+        "An assassin",
+        "A defector",
+        "A whistleblower"
+      ],
+      "answer": 0,
+      "why": "Smiley is brought out of retirement to find a <strong>mole</strong> at the top of the Circus, planted by Karla. Le Carré coined modern spy-thriller vocabulary: mole, honeytrap, lamplighter, scalphunter."
+    },
+    {
+      "cat": "random",
+      "q": "In <em>Mission: Impossible</em> (1996), what does Ethan Hunt suspend himself from to avoid touching the floor?",
+      "options": [
+        "A skylight cable in the CIA Langley vault",
+        "A grappling hook in a Kremlin hallway",
+        "A drone in the Burj Khalifa",
+        "An elevator shaft cable"
+      ],
+      "answer": 0,
+      "why": "<strong>The Langley NOC list heist.</strong> Pressure-sensitive floor, temperature-sensitive ceiling, sound-sensitive room. The single bead of sweat about to drop is one of cinema's great suspense beats."
+    },
+    {
+      "cat": "random",
+      "q": "Which real cipher gets cracked at Bletchley Park in <em>The Imitation Game</em> (2014)?",
+      "options": ["The Caesar cipher", "Enigma", "Lorenz / Tunny", "Purple"],
+      "answer": 1,
+      "why": "Turing's bombe machine is built to break <strong>Enigma</strong>. (Fun corollary: the higher-level <strong>Lorenz</strong> cipher used by German High Command was broken by Tommy Flowers' Colossus, the first electronic computer — but that's a different movie that hasn't been made yet.)"
+    },
+    {
+      "cat": "random",
+      "q": "What's Jason Bourne's real name in <em>The Bourne Identity</em>?",
+      "options": ["David Webb", "John Michael Kane", "Adam Carlson", "Foster Sullivan"],
+      "answer": 0,
+      "why": "<strong>David Webb</strong>. 'Jason Bourne' is the codename for his Treadstone-program operative identity. The four aliases listed are all actual covers he used in the films."
+    },
+    {
+      "cat": "random",
+      "q": "In <em>Catch Me If You Can</em>, what professions does Frank Abagnale impersonate?",
+      "options": [
+        "Pilot, doctor, lawyer",
+        "Pilot, FBI agent, professor",
+        "Doctor, banker, journalist",
+        "Pilot, surgeon, judge"
+      ],
+      "answer": 0,
+      "why": "<strong>Pan Am pilot, ER doctor, Louisiana lawyer</strong> — all by his early 20s, all without credentials. Based on Abagnale's (somewhat embellished) memoir. Caught by FBI agent Carl Hanratty (a composite character)."
+    },
+    {
+      "cat": "random",
+      "q": "In <em>Skyfall</em>, what's the name of Bond's family estate in Scotland?",
+      "options": ["Skyfall Lodge", "Skyfall", "Bond Manor", "The Highlands"],
+      "answer": 1,
+      "why": "Just <strong>Skyfall</strong> — engraved on the gate. The film's climax is staged there as Bond and M defend it against Silva. Iconic Sam Mendes shot of the house silhouetted against the moor at dusk."
+    },
+    {
+      "cat": "random",
+      "q": "In <em>Inception</em>, what object does Cobb spin to test if he's in a dream?",
+      "options": ["A coin", "A spinning top", "A chess piece", "A wedding ring"],
+      "answer": 1,
+      "why": "<strong>A spinning top</strong> — if it falls, he's awake; if it spins forever, he's dreaming. The final shot of the movie is the top wobbling — Nolan refused to confirm whether it falls."
+    },
+    {
+      "cat": "random",
+      "q": "In <em>Snowden</em> (and real life), what NSA program was leaked, revealing mass collection of phone metadata?",
+      "options": ["ECHELON", "PRISM", "STELLARWIND / Section 215", "TEMPORA"],
+      "answer": 2,
+      "why": "<strong>STELLARWIND</strong> / Section 215 was the bulk metadata program. <strong>PRISM</strong> (different program, also leaked) collected internet content from major providers. Both made the front pages in June 2013."
+    }
+  ]
+}
