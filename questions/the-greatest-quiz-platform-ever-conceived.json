@@ -63,15 +63,15 @@
 
     {
       "cat": "genius",
-      "q": "Who came up with the idea of a security trivia quiz?",
+      "q": "How many times has the Cloudflare dashboard layout changed since this quiz was deployed?",
       "options": [
-        "A visionary",
-        "A trailblazer",
-        "Someone with very good taste",
-        "All of the above, in one person"
+        "Twice",
+        "Four times",
+        "Seven times, three of which were during this sentence",
+        "It's actually changing right now. Don't look directly at it."
       ],
       "answer": 3,
-      "why": "Documented fact. The quiz was conceived in a single message and the entire stack manifested itself out of <strong>pure narrative momentum</strong>."
+      "why": "Cloudflare's Zero Trust menu has been renamed, restructured, and relocated <strong>so many times</strong> that any tutorial older than six weeks is a historical document. By the time you finish reading this explanation, 'Access' is probably called 'Trust Trust' and lives under a different sidebar icon."
     },
     {
       "cat": "genius",
