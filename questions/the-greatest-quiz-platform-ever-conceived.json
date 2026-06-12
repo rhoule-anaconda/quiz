@@ -19,15 +19,15 @@
     },
     {
       "cat": "platform",
-      "q": "What is the best part about hosting the quiz on a sandbox EC2 that gets torn down weekly?",
+      "q": "Where is this quiz actually hosted?",
       "options": [
-        "Forced freshness — every week, a new quiz",
-        "Built-in disaster recovery (the disaster recovers itself)",
-        "It's the most ephemeral infrastructure in the company",
-        "All of the above, plus you can blame the teardown if something breaks"
+        "A sandbox EC2 with Caddy and a bespoke ACME pipeline",
+        "Cloudflare Pages, like a sensible person would have done from the start",
+        "S3 + CloudFront behind a Worker",
+        "All of the above, in chronological order"
       ],
       "answer": 3,
-      "why": "<strong>All of the above.</strong> The weekly teardown is not a bug, it is a feature, a philosophy, and a convenient excuse all at once."
+      "why": "<strong>All of the above, eventually.</strong> The quiz briefly lived on a t3.small in the sandbox account fighting xcaddy compile times and AL2023 tmpfs limits, before someone said 'this is a static site' out loud and it migrated to <strong>Cloudflare Pages</strong>, where it should have been from question one."
     },
     {
       "cat": "platform",
