@@ -17,6 +17,9 @@
   "migrations": [
     { "tag": "v1", "new_sqlite_classes": ["GameRoom"] }
   ],
+  "routes": [
+    { "pattern": "secquiz.anacondaconnect.com", "custom_domain": true }
+  ],
   "observability": {
     "enabled": true
   }
