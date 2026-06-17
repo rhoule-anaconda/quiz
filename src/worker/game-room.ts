@@ -395,17 +395,37 @@ export class GameRoom extends DurableObject<Env> {
 
   /**
    * Build a per-role state snapshot.
-   * - Host sees: full question + answer + per-player answers + scores
-   * - Players see: question text + options only; their own answer; scores only after reveal
+   *
+   * Anti-leader-following rule: while the question is open, NOBODY sees which
+   * option got which votes — not even the host. The host only sees an
+   * aggregate "answered" count. Per-option histograms appear at reveal.
+   *
+   * Players never see whether *other* players have answered (that would let a
+   * latecomer infer "Bob picked, follow Bob"). Players only see their own
+   * answer state. The host still sees per-player hasAnswered dots so they
+   * know when to advance.
+   *
+   * - Host sees: question + per-player answered dots + total-answered count;
+   *              full answer + per-option histogram only after reveal.
+   * - Players see: question + their own answer state; scores only after reveal.
    */
   private publicState(forAttachment?: SocketAttachment): unknown {
     const totalQuestions = this.quiz?.questions.length ?? 0;
-    const playerList = [...this.players.entries()].map(([id, p]) => ({
-      id,
-      name: p.name,
-      score: p.score,
-      hasAnswered: p.currentAnswer !== null,
-    }));
+    const role = forAttachment?.role;
+    const isReveal = this.phase === "reveal";
+    const isFinal = this.phase === "final";
+
+    // Player list shape depends on viewer + phase
+    const playerList = [...this.players.entries()].map(([id, p]) => {
+      // Score is always safe; it doesn't reveal which option anyone picked.
+      const base = { id, name: p.name, score: p.score };
+      // Host sees per-player answered dots so they can pace the round.
+      // Players don't — they'd use it to coordinate.
+      if (role === "host") {
+        return { ...base, hasAnswered: p.currentAnswer !== null };
+      }
+      return base;
+    });
 
     const base = {
       quizSlug: this.quizSlug,
@@ -416,43 +436,56 @@ export class GameRoom extends DurableObject<Env> {
       players: playerList,
     };
 
-    if (this.phase === "lobby" || this.phase === "final") {
+    if (this.phase === "lobby" || isFinal) {
       return base;
     }
 
     const q = this.quiz?.questions[this.currentQuestionIndex];
     if (!q) return base;
 
-    const role = forAttachment?.role;
     const myAnswer =
       forAttachment?.role === "player" && forAttachment.playerId
         ? this.players.get(forAttachment.playerId)?.currentAnswer ?? null
         : null;
 
+    // Pre-reveal aggregate: total answered, NO per-option breakdown.
+    let answeredCount = 0;
+    for (const p of this.players.values()) {
+      if (p.currentAnswer !== null) answeredCount += 1;
+    }
+
     if (role === "host") {
-      // Host gets full answer + everyone's submitted choices for the histogram
+      // At reveal: per-option vote counts AND the names of who picked each,
+      // so the host can narrate ("Bob, you went with C — let's see why...").
+      // Before reveal: only the total answered count.
       const answers: Record<number, number> = {};
-      for (const p of this.players.values()) {
-        if (p.currentAnswer !== null) {
-          answers[p.currentAnswer] = (answers[p.currentAnswer] ?? 0) + 1;
+      const answersByName: Record<number, string[]> = {};
+      if (isReveal) {
+        for (const p of this.players.values()) {
+          if (p.currentAnswer !== null) {
+            answers[p.currentAnswer] = (answers[p.currentAnswer] ?? 0) + 1;
+            (answersByName[p.currentAnswer] ??= []).push(p.name);
+          }
         }
       }
       return {
         ...base,
         question: { cat: q.cat, q: q.q, options: q.options },
-        correctIndex: this.phase === "reveal" ? q.answer : null,
-        why: this.phase === "reveal" ? q.why : null,
+        correctIndex: isReveal ? q.answer : null,
+        why: isReveal ? q.why : null,
         answers,
+        answersByName,
+        answeredCount,
       };
     }
 
-    // Player view: never expose the answer index until reveal
     return {
       ...base,
       question: { cat: q.cat, q: q.q, options: q.options },
-      correctIndex: this.phase === "reveal" ? q.answer : null,
-      why: this.phase === "reveal" ? q.why : null,
+      correctIndex: isReveal ? q.answer : null,
+      why: isReveal ? q.why : null,
       myAnswer,
+      answeredCount,
     };
   }
 }

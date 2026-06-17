@@ -29,6 +29,9 @@ export function hostPage(code: string): string {
   .option .text { flex: 1; }
   .option .bar { background: var(--green-3); height: 28px; border-radius: 6px; transition: width .4s ease; min-width: 0; opacity: 0.6; }
   .option .count { width: 36px; text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; font-size: 16px; }
+  .option .pickers { width: 100%; flex-basis: 100%; padding-left: 52px; padding-top: 8px; color: var(--muted); font-size: 14px; line-height: 1.4; }
+  .option .pickers b { color: var(--text); font-weight: 500; }
+  .option { flex-wrap: wrap; }
   .option.correct { border-color: var(--green-1); background: #1a4d22; }
   .option.correct .letter { background: var(--green-1); color: white; }
   .why { margin-top: 24px; padding: 22px 26px; background: #0e1f15; border-left: 4px solid var(--green-1); border-radius: 8px; font-size: 22px; line-height: 1.5; color: var(--text); }
@@ -93,7 +96,7 @@ export function hostPage(code: string): string {
         <div class="lobby">
           <span class="pill">Lobby</span>
           <h2>Waiting for players…</h2>
-          <p>Once everyone has joined, click <b>Start</b>. They'll see the question on their phone, you'll see the live histogram here.</p>
+          <p>Once everyone has joined, click <b>Start</b>. They'll see the question on their phone, you'll see who's answered. Per-option results stay hidden until you click <b>Reveal</b> — no follow-the-leader.</p>
           <div class="join-info">
             Players go to <code>\${location.origin}/play/\${CODE}</code> and pick a name.
           </div>
@@ -104,22 +107,31 @@ export function hostPage(code: string): string {
         </div>\`;
     } else if (state.phase === "question" || state.phase === "reveal") {
       const q = state.question;
-      const answers = state.answers || {};
-      const totalAnswered = Object.values(answers).reduce((a, b) => a + b, 0);
+      const isReveal = state.phase === "reveal";
+      // Histogram shown ONLY at reveal — otherwise we'd leak the leading
+      // option to anyone watching the screen-share, and players would
+      // follow the crowd.
+      const answers = isReveal ? (state.answers || {}) : {};
+      const totalAnswered = state.answeredCount ?? 0;
       const max = Math.max(1, ...Object.values(answers));
       const cat = state.categories?.[q.cat];
       const catBadge = cat ? \`<span class="pill" style="background:\${cat.bg};color:\${cat.fg};margin-bottom:14px;">\${cat.icon || ""} \${cat.label || q.cat}</span>\` : "";
-      const isReveal = state.phase === "reveal";
+      const byName = isReveal ? (state.answersByName || {}) : {};
       const opts = q.options.map((o, i) => {
         const c = answers[i] || 0;
-        const pct = (c / max) * 100;
+        const pct = isReveal ? (c / max) * 100 : 0;
         const isCorrect = isReveal && i === state.correctIndex;
+        const names = byName[i] || [];
+        const namesHtml = names.length
+          ? \`<div class="pickers">\${names.map(n => \`<b>\${escape(n)}</b>\`).join(", ")}</div>\`
+          : "";
         return \`
           <div class="option \${isCorrect ? "correct" : ""}">
             <div class="letter">\${String.fromCharCode(65 + i)}</div>
             <div class="text">\${o}</div>
-            <div class="bar" style="width:\${pct * 1.2}px"></div>
-            <div class="count">\${c}</div>
+            <div class="bar" style="width:\${isReveal ? pct * 1.2 + "px" : "0"}; visibility:\${isReveal ? "visible" : "hidden"}"></div>
+            <div class="count" style="visibility:\${isReveal ? "visible" : "hidden"}">\${c}</div>
+            \${namesHtml}
           </div>\`;
       }).join("");
       const why = isReveal && state.why ? \`<div class="why">\${state.why}</div>\` : "";
