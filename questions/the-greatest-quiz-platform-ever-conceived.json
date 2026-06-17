@@ -22,12 +22,24 @@
       "q": "Where is this quiz actually hosted?",
       "options": [
         "A sandbox EC2 with Caddy and a bespoke ACME pipeline",
-        "Cloudflare Pages, like a sensible person would have done from the start",
-        "S3 + CloudFront behind a Worker",
+        "Cloudflare Pages, briefly",
+        "A Cloudflare Worker with Durable Objects, which is where we are now",
         "All of the above, in chronological order"
       ],
       "answer": 3,
-      "why": "<strong>All of the above, eventually.</strong> The quiz briefly lived on a t3.small in the sandbox account fighting xcaddy compile times and AL2023 tmpfs limits, before someone said 'this is a static site' out loud and it migrated to <strong>Cloudflare Pages</strong>, where it should have been from question one."
+      "why": "<strong>All of the above, in order.</strong> Started on a t3.small in sandbox fighting xcaddy compile times and AL2023 tmpfs limits, moved to <strong>Cloudflare Pages</strong> when someone said 'this is a static site' out loud, then moved to a <strong>Cloudflare Worker with Durable Objects</strong> when 'this is a static site' became a lie because we wanted live multiplayer trivia."
+    },
+    {
+      "cat": "platform",
+      "q": "If you've made it to this question via <code>/host/&lt;CODE&gt;</code> with people answering on their phones, you are using:",
+      "options": [
+        "A Cloudflare Worker",
+        "A Durable Object, one per game room, with hibernating WebSockets",
+        "Server-side question delivery so players can't view-source the answers",
+        "All of the above, simultaneously, holding hands"
+      ],
+      "answer": 3,
+      "why": "<strong>All three.</strong> The Worker routes the page; a <code>GameRoom</code> Durable Object holds per-room state and broadcasts over WebSockets; the answer key never leaves the server until reveal. If you're playing solo at <code>/&lt;slug&gt;</code> instead, none of that is happening — it's just a static HTML file with the answers right there in the source."
     },
     {
       "cat": "platform",
@@ -50,15 +62,15 @@
     },
     {
       "cat": "platform",
-      "q": "The Warp IP allowlist ensures that only ____ can access the quiz.",
+      "q": "Who can access this quiz?",
       "options": [
-        "Anaconda employees",
-        "People worthy of the quiz",
-        "The chosen ones",
-        "Anaconda employees, who are by definition the chosen ones worthy of the quiz"
+        "Whoever has a Warp IP — wait, no, we fixed that",
+        "Anyone authenticated via Anaconda SSO through Cloudflare Access",
+        "The chosen ones, as identified by their @anaconda.com email",
+        "All of the above, but the second and third options are the same thing"
       ],
       "answer": 3,
-      "why": "Network ACLs as identity. Identity as worthiness. Worthiness as Warp. <strong>It all loops back to itself</strong>, like a well-architected system should."
+      "why": "<strong>Network-as-identity is officially retired.</strong> Cloudflare Access now handles auth: SSO via the Anaconda IdP, gated on emails ending in <code>@anaconda.com</code>. The 'chosen ones' framing remains accurate — it's just that Cloudflare verifies it now instead of trusting whoever's IP looks Warp-shaped."
     },
 
     {
