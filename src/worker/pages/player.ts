@@ -29,8 +29,13 @@ export function playerPage(code: string): string {
   .opt.wrong-pick { border-color: var(--red); background: #4d1a1a; color: #ffc9c9; }
   .opt.dim { opacity: 0.5; }
   .opt:disabled { cursor: default; }
-  .why { margin-top: 16px; padding: 14px 16px; background: #0e1f15; border-left: 3px solid var(--green-1); border-radius: 6px; font-size: 14px; line-height: 1.5; color: var(--muted); }
+  .why { margin-top: 12px; padding: 14px 16px; background: #0e1f15; border-left: 3px solid var(--green-1); border-radius: 6px; font-size: 14px; line-height: 1.5; color: var(--muted); }
   .why strong { color: var(--gold); }
+  .verdict { margin-top: 16px; padding: 16px 18px; border-radius: 10px; font-size: 18px; font-weight: 600; text-align: center; line-height: 1.3; }
+  .verdict.correct { background: #1a4d22; color: #c5ffd0; border: 2px solid var(--green-1); }
+  .verdict.wrong { background: #4d1a1a; color: #ffc9c9; border: 2px solid var(--red); }
+  .verdict.miss { background: #3a3a1a; color: #ffe28a; border: 2px solid #b89a2a; }
+  .verdict .small { display: block; font-size: 13px; font-weight: 400; margin-top: 6px; opacity: 0.85; }
   .scoreline { margin-top: 14px; text-align: center; color: var(--muted); font-size: 14px; }
   .scoreline b { color: var(--gold); }
   .waiting { text-align: center; color: var(--muted); padding: 40px 0; font-size: 15px; }
@@ -182,18 +187,30 @@ export function playerPage(code: string): string {
         }
         return \`<button class="\${cls}" \${locked ? "disabled" : ""} data-idx="\${i}">\${o}</button>\`;
       }).join("");
+      const correctLetter = String.fromCharCode(65 + state.correctIndex);
+      const correctText = q.options[state.correctIndex];
+      let verdict = "";
+      if (isReveal) {
+        if (myAnswer === state.correctIndex) {
+          verdict = \`<div class="verdict correct">✅ Correct!<span class="small">+1 point</span></div>\`;
+        } else if (myAnswer == null) {
+          verdict = \`<div class="verdict miss">⏱ No answer locked in.<span class="small">The answer was \${correctLetter}: \${escape(correctText)}</span></div>\`;
+        } else {
+          const myLetter = String.fromCharCode(65 + myAnswer);
+          verdict = \`<div class="verdict wrong">❌ Not quite.<span class="small">You picked \${myLetter}. The answer was \${correctLetter}: \${escape(correctText)}</span></div>\`;
+        }
+      }
       const why = isReveal && state.why ? \`<div class="why">\${state.why}</div>\` : "";
-      const status = isReveal
-        ? (myAnswer === state.correctIndex ? '✅ Correct!' : (myAnswer == null ? "⏱ No answer" : '❌ Not quite.'))
-        : (locked ? "Answer locked. Waiting for others…" : "Pick one.");
+      const inProgressStatus = locked ? "Answer locked. Waiting for others…" : "Pick one.";
       root.innerHTML = \`
         <div class="panel">
           \${catBadge}
           <div style="color:var(--muted);font-size:12px;margin:8px 0;">Question \${state.questionIndex + 1} of \${state.totalQuestions}</div>
           <div class="question">\${q.q}</div>
           <div class="opts">\${opts}</div>
+          \${verdict}
           \${why}
-          <div class="scoreline">\${status} · Your score: <b>\${me?.score ?? 0}</b></div>
+          <div class="scoreline">\${isReveal ? "" : inProgressStatus + " · "}Your score: <b>\${me?.score ?? 0}</b></div>
         </div>\`;
       if (!locked && !isReveal) {
         root.querySelectorAll(".opt").forEach(b => {

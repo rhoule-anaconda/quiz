@@ -38,6 +38,9 @@ export function hostPage(code: string): string {
   .why strong { color: var(--gold); }
   .why em { color: var(--text); font-style: italic; }
   .why code { font-size: 0.92em; }
+  .reveal-banner { margin-top: 24px; padding: 20px 28px; background: #1a4d22; border: 3px solid var(--green-1); border-radius: 12px; font-size: 24px; font-weight: 700; color: #c5ffd0; text-align: center; line-height: 1.3; }
+  .reveal-banner .letter-big { display: inline-block; width: 40px; height: 40px; line-height: 40px; border-radius: 50%; background: var(--green-1); color: white; margin-right: 12px; font-size: 22px; vertical-align: middle; }
+  .reveal-banner .stats { display: block; font-size: 16px; font-weight: 400; color: var(--muted); margin-top: 8px; }
   .controls { margin-top: auto; padding-top: 28px; display: flex; gap: 12px; align-items: center; }
   .controls .progress { flex: 1; color: var(--muted); font-size: 13px; }
   .scoreboard { background: var(--panel); border: 1px solid #1f4a30; border-radius: 18px; padding: 24px; height: fit-content; }
@@ -134,6 +137,20 @@ export function hostPage(code: string): string {
             \${namesHtml}
           </div>\`;
       }).join("");
+      let revealBanner = "";
+      if (isReveal) {
+        const correctLetter = String.fromCharCode(65 + state.correctIndex);
+        const correctText = q.options[state.correctIndex];
+        const correctCount = answers[state.correctIndex] || 0;
+        const totalAnsweredAtReveal = Object.values(answers).reduce((a, b) => a + b, 0) || 0;
+        const noAnswerCount = state.players.length - totalAnsweredAtReveal;
+        const noAnswerLine = noAnswerCount > 0 ? \` · \${noAnswerCount} didn't answer\` : "";
+        revealBanner = \`
+          <div class="reveal-banner">
+            <span class="letter-big">\${correctLetter}</span>\${escape(correctText)}
+            <span class="stats">\${correctCount} of \${state.players.length} got it right\${noAnswerLine}</span>
+          </div>\`;
+      }
       const why = isReveal && state.why ? \`<div class="why">\${state.why}</div>\` : "";
       const btn = isReveal
         ? (state.questionIndex >= state.totalQuestions - 1
@@ -146,6 +163,7 @@ export function hostPage(code: string): string {
           \${catBadge}
           <div class="question">\${q.q}</div>
           <div class="options">\${opts}</div>
+          \${revealBanner}
           \${why}
         </div>
         <div class="controls">
