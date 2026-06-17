@@ -70,6 +70,16 @@ export default {
       return html(playerPage(code));
     }
 
+    // Name reservation pre-flight (player page calls this before opening WS)
+    const checkNameMatch = path.match(/^\/api\/rooms\/([A-Z0-9]{4,8})\/check-name$/);
+    if (request.method === "POST" && checkNameMatch) {
+      const code = checkNameMatch[1];
+      const stub = env.GAME_ROOM.getByName(code);
+      const forwardUrl = new URL(request.url);
+      forwardUrl.pathname = "/check-name";
+      return stub.fetch(forwardUrl.toString(), request);
+    }
+
     // WebSocket upgrade routed to the room's DO
     const wsMatch = path.match(/^\/ws\/([A-Z0-9]{4,8})\/?$/);
     if (wsMatch) {

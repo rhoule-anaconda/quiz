@@ -60,7 +60,20 @@ export function playerPage(code: string): string {
     return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\\"":"&quot;","'":"&#39;"}[c]));
   }
 
-  if (myName) connect(myName); else renderJoin();
+  // On auto-rejoin (localStorage), still pre-flight in case someone else now
+  // has this name (e.g. a different player took it during a disconnect).
+  if (myName) {
+    fetch("/api/rooms/" + CODE + "/check-name", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ name: myName }),
+    }).then(r => {
+      if (r.ok) connect(myName);
+      else { localStorage.removeItem("quiz-name-" + CODE); renderJoin("Your previous name is in use. Pick a new one."); }
+    }).catch(() => connect(myName)); // network blip — try the WS anyway
+  } else {
+    renderJoin();
+  }
 
   function renderJoin(err) {
     const root = $("root");
@@ -73,9 +86,34 @@ export function playerPage(code: string): string {
         <button class="primary" id="join">Join →</button>
       </div>\`;
     $("name").addEventListener("keydown", e => { if (e.key === "Enter") $("join").click(); });
-    $("join").addEventListener("click", () => {
+    $("join").addEventListener("click", async () => {
       const name = $("name").value.trim();
       if (!name) { $("err").textContent = "Pick a name."; return; }
+      $("join").disabled = true;
+      $("err").textContent = "";
+      // Pre-flight: returns 409 if a different live player already has this name.
+      // Allows reconnect of a player whose previous socket has closed.
+      try {
+        const res = await fetch("/api/rooms/" + CODE + "/check-name", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ name }),
+        });
+        if (res.status === 409) {
+          $("err").textContent = "Name already taken in this room. Pick another.";
+          $("join").disabled = false;
+          return;
+        }
+        if (!res.ok) {
+          $("err").textContent = "Couldn't join. Try again.";
+          $("join").disabled = false;
+          return;
+        }
+      } catch (e) {
+        $("err").textContent = "Network error. Try again.";
+        $("join").disabled = false;
+        return;
+      }
       myName = name;
       localStorage.setItem("quiz-name-" + CODE, name);
       connect(name);

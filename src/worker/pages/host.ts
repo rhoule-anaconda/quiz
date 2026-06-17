@@ -31,8 +31,10 @@ export function hostPage(code: string): string {
   .option .count { width: 36px; text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; font-size: 16px; }
   .option.correct { border-color: var(--green-1); background: #1a4d22; }
   .option.correct .letter { background: var(--green-1); color: white; }
-  .why { margin-top: 24px; padding: 18px 22px; background: #0e1f15; border-left: 3px solid var(--green-1); border-radius: 6px; font-size: 16px; line-height: 1.5; color: var(--muted); }
+  .why { margin-top: 24px; padding: 22px 26px; background: #0e1f15; border-left: 4px solid var(--green-1); border-radius: 8px; font-size: 22px; line-height: 1.5; color: var(--text); }
   .why strong { color: var(--gold); }
+  .why em { color: var(--text); font-style: italic; }
+  .why code { font-size: 0.92em; }
   .controls { margin-top: auto; padding-top: 28px; display: flex; gap: 12px; align-items: center; }
   .controls .progress { flex: 1; color: var(--muted); font-size: 13px; }
   .scoreboard { background: var(--panel); border: 1px solid #1f4a30; border-radius: 18px; padding: 24px; height: fit-content; }

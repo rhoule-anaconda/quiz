@@ -96,6 +96,19 @@ export class GameRoom extends DurableObject<Env> {
       return Response.json(this.publicState());
     }
 
+    // Pre-flight name check: returns 200 if the name is free or claimable as a
+    // reconnect, 409 if a different active player already holds it.
+    if (request.method === "POST" && url.pathname.endsWith("/check-name")) {
+      const { name } = (await request.json()) as { name?: string };
+      const trimmed = (name ?? "").trim().slice(0, 32);
+      if (!trimmed) return Response.json({ error: "Name required" }, { status: 400 });
+      const existing = this.findPlayerIdByName(trimmed);
+      if (existing !== null && this.hasActiveSocketForPlayer(existing)) {
+        return Response.json({ error: "Name taken" }, { status: 409 });
+      }
+      return Response.json({ ok: true });
+    }
+
     // WebSocket upgrade for both host and player
     if (url.pathname.endsWith("/ws")) {
       if (request.headers.get("Upgrade") !== "websocket") {
@@ -117,10 +130,16 @@ export class GameRoom extends DurableObject<Env> {
       if (role === "host") {
         attachment = { role: "host" };
       } else {
-        // Players join with a name; server-side dedupe on display name.
         const trimmed = name.trim().slice(0, 32);
         if (!trimmed) {
           return new Response("Name required", { status: 400 });
+        }
+        // Reject if the name is already in use by a *different* live socket.
+        // Reconnects (same name, prior socket closed) are allowed and inherit
+        // the existing player's score.
+        const existing = this.findPlayerIdByName(trimmed);
+        if (existing !== null && this.hasActiveSocketForPlayer(existing)) {
+          return new Response("Name taken", { status: 409 });
         }
         const playerId = this.upsertPlayer(trimmed);
         attachment = { role: "player", playerId };
@@ -313,6 +332,28 @@ export class GameRoom extends DurableObject<Env> {
     this.players.set(id, player);
     this.persistPlayer(id, player);
     return id;
+  }
+
+  private findPlayerIdByName(name: string): string | null {
+    for (const [id, p] of this.players) {
+      if (p.name === name) return id;
+    }
+    return null;
+  }
+
+  private hasActiveSocketForPlayer(playerId: string): boolean {
+    for (const ws of this.ctx.getWebSockets()) {
+      const att = ws.deserializeAttachment() as SocketAttachment | null;
+      if (att?.role === "player" && att.playerId === playerId) {
+        // Only count sockets in OPEN/CONNECTING states. webSocketClose runs
+        // *before* getWebSockets stops returning the closed socket in some
+        // versions of the runtime; readyState is the source of truth.
+        if (ws.readyState === WebSocket.READY_STATE_OPEN || ws.readyState === WebSocket.READY_STATE_CONNECTING) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   private clearAnswers(): void {
