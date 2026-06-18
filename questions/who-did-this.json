@@ -1,0 +1,42 @@
+{
+  "categories": {
+    "team": { "label": "Who Did This?", "icon": "🕵️", "bg": "#3a1a4d", "fg": "#d58aff" }
+  },
+  "questions": [
+    {
+      "cat": "team",
+      "q": "Which teammate almost drowned their sibling with an egg?",
+      "options": ["🐦‍⬛ Crow", "🦦 Otter", "🪶 Heron", "🦊 Fox", "🐺 Wolf"],
+      "answer": 0,
+      "why": "It was <strong>🐦‍⬛ Crow</strong>. Ask them to tell the story — it's better in person than in print."
+    },
+    {
+      "cat": "team",
+      "q": "Which teammate goes to bed at 7pm every single day?",
+      "options": ["🐦‍⬛ Crow", "🦦 Otter", "🪶 Heron", "🦊 Fox", "🐺 Wolf"],
+      "answer": 1,
+      "why": "<strong>🦦 Otter</strong>. An admirable commitment to sleep hygiene. We respect it."
+    },
+    {
+      "cat": "team",
+      "q": "Which teammate has performed in an opera?",
+      "options": ["🐦‍⬛ Crow", "🦦 Otter", "🪶 Heron", "🦊 Fox", "🐺 Wolf"],
+      "answer": 2,
+      "why": "<strong>🪶 Heron</strong>. They will not be performing today, despite popular demand."
+    },
+    {
+      "cat": "team",
+      "q": "Which teammate once quit their job to join a monastery and live in the mountains?",
+      "options": ["🐦‍⬛ Crow", "🦦 Otter", "🪶 Heron", "🦊 Fox", "🐺 Wolf"],
+      "answer": 3,
+      "why": "<strong>🦊 Fox</strong>. The mountains were great. The monastery was, by their own account, harder."
+    },
+    {
+      "cat": "team",
+      "q": "Which teammate has met an MLB Hall of Famer?",
+      "options": ["🐦‍⬛ Crow", "🦦 Otter", "🪶 Heron", "🦊 Fox", "🐺 Wolf"],
+      "answer": 4,
+      "why": "<strong>🐺 Wolf</strong>. There is, of course, a photograph. They will absolutely show you the photograph."
+    }
+  ]
+}
