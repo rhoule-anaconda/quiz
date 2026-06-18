@@ -34,6 +34,9 @@ export function hostPage(code: string): string {
   .option { flex-wrap: wrap; }
   .option.correct { border-color: var(--green-1); background: #1a4d22; }
   .option.correct .letter { background: var(--green-1); color: white; }
+  .option.wrong-pick { border-color: var(--red); background: #4d1a1a; }
+  .option.wrong-pick .letter { background: var(--red); color: white; }
+  .option.wrong-pick .pickers b { color: #ffc9c9; }
   .why { margin-top: 24px; padding: 22px 26px; background: #0e1f15; border-left: 4px solid var(--green-1); border-radius: 8px; font-size: 22px; line-height: 1.5; color: var(--text); }
   .why strong { color: var(--gold); }
   .why em { color: var(--text); font-style: italic; }
@@ -124,12 +127,16 @@ export function hostPage(code: string): string {
         const c = answers[i] || 0;
         const pct = isReveal ? (c / max) * 100 : 0;
         const isCorrect = isReveal && i === state.correctIndex;
+        // Highlight wrong-but-picked options in red so the room can see which
+        // distractors caught people, not just the right answer.
+        const isWrongPick = isReveal && i !== state.correctIndex && c > 0;
+        const cls = isCorrect ? "correct" : isWrongPick ? "wrong-pick" : "";
         const names = byName[i] || [];
         const namesHtml = names.length
           ? \`<div class="pickers">\${names.map(n => \`<b>\${escape(n)}</b>\`).join(", ")}</div>\`
           : "";
         return \`
-          <div class="option \${isCorrect ? "correct" : ""}">
+          <div class="option \${cls}">
             <div class="letter">\${String.fromCharCode(65 + i)}</div>
             <div class="text">\${o}</div>
             <div class="bar" style="width:\${isReveal ? pct * 1.2 + "px" : "0"}; visibility:\${isReveal ? "visible" : "hidden"}"></div>
