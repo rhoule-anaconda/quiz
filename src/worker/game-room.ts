@@ -46,6 +46,15 @@ interface SocketAttachment {
 
 const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
 
+function shuffle<T>(arr: readonly T[]): T[] {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 export class GameRoom extends DurableObject<Env> {
   private quiz: Quiz | null = null;
   private quizSlug: string | null = null;
@@ -262,13 +271,18 @@ export class GameRoom extends DurableObject<Env> {
 
   private async initialize(quizSlug: string, quiz: Quiz): Promise<void> {
     this.quizSlug = quizSlug;
-    this.quiz = quiz;
+    // Shuffle once at room creation so categories are interleaved instead of
+    // clustered (the source JSON groups by category for authoring sanity).
+    // The order is frozen for the lifetime of the room, so a refreshing
+    // player still sees the same Question 5 the host is showing.
+    const shuffled: Quiz = { ...quiz, questions: shuffle(quiz.questions) };
+    this.quiz = shuffled;
     this.phase = "lobby";
     this.currentQuestionIndex = 0;
     this.players.clear();
     this.ctx.storage.sql.exec("DELETE FROM players");
     await this.persistMeta();
-    await this.ctx.storage.put("quiz", quiz);
+    await this.ctx.storage.put("quiz", shuffled);
   }
 
   private async restore(): Promise<void> {
